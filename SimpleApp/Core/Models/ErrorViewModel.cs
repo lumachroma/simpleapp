@@ -1,6 +1,4 @@
-using System;
-
-namespace SimpleApp.Models
+namespace SimpleApp.Core.Models
 {
     public class ErrorViewModel
     {
