@@ -5,31 +5,38 @@
     ViewBag.Title = "Brainstormer Session : " + Model.Name;
     Layout = "_Layout";
 }
-<h2>Brainstorm Session: @Model.Name</h2>
-<div class="small">@Model.DateCreated</div>
+<h2>Brainstorm Session</h2>
 
 <div class="row">
-    <div class="col-md-9">
-        <h3>Idea Count: <span data-bind="text:ideas().length"></span></h3>
-        <div data-bind='foreach: ideas'>
-            <div class="panel panel-default">
-                <div class="panel-heading" data-bind="text:name">
-                </div>
-                <div class="panel-body" data-bind="text:description">
-                </div>
+    <div class="col-md-8">
+        <div class="card mb-3 w-50">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <h6 class="card-subtitle mb-2 text-muted"><span data-bind="text:ideas().length"></span> ideas</h6>
+                <p class="card-text"><small>Created on @Model.DateCreated</small></p>
             </div>
+            <ul class="list-group list-group-flush" data-bind='foreach: ideas'>
+                <li class="list-group-item">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <h6><span data-bind='text:name'></span></h6>
+                        @*<span class="badge badge-secondary badge-pill" data-bind="text:$index()+1">0</span>*@
+                        <small class="text-muted">idea <span data-bind="text:$index()+1"></span></small>
+                    </div>
+                    <p class="mb-1"><span data-bind='text:description'></span></p>                    
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
+    <div class="col-md-4">       
+        <div class="card">
+            <div class="card-header">
                 Add New Idea
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <div data-bind="with: ideaForEditing">
                     <fieldset class="form-group">
                         <label for="ideaName">Idea Name</label>
-                        <input type="text" class="form-control" id="ideaName" name="ideaName" placeholder="New Idea" data-bind="value:name">
+                        <input type="text" class="form-control" id="ideaName" name="ideaName" placeholder="Awesome idea" data-bind="value:name">
                     </fieldset>
                     <fieldset class="form-group">
                         <label for="ideaDescription">Description</label>

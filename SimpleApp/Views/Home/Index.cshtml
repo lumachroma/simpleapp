@@ -8,29 +8,29 @@
 
 <h2>Brainstorm Sessions</h2>
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
         @foreach (var storm in Model)
         {
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <a href="@Url.Action("Index","Session", new {id=@storm.Id})">@storm.Name</a> - @storm.DateCreated.ToString()
-                </div>
-                <div class="panel-body">
-                    @storm.IdeaCount ideas
+            <div class="card mb-3 w-50">
+                <div class="card-body">
+                    <h5 class="card-title">@storm.Name</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@storm.IdeaCount ideas</h6>
+                    <p class="card-text"><small>Created on @storm.DateCreated.ToString()</small></p>
+                    <a href="@Url.Action("Index","Session", new {id=@storm.Id})">Add Ideas</a>
                 </div>
             </div>
         }
     </div>
-    <div class="col-md-3">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
                 Add New Session
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <form method="post" asp-controller="Home" asp-action="Index">
                     <fieldset class="form-group">
-                        <label for="sessionName">New Session Name</label>
-                        <input type="text" class="form-control" id="sessionName" name="SessionName" placeholder="Name" required />
+                        <label for="sessionName">Session Name</label>
+                        <input type="text" class="form-control" id="sessionName" name="SessionName" placeholder="Stupendous session" required />
                     </fieldset>
                     <input type="submit" value="Save" id="SaveButton" name="SaveButton" class="btn btn-primary" />
                 </form>
