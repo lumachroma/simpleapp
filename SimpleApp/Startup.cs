@@ -35,6 +35,10 @@ namespace SimpleApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            string contentRoot = Environment.ContentRootPath;
+            Console.WriteLine($"Root: {contentRoot}");
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo($@"{contentRoot}"));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<AppDbContext>(
