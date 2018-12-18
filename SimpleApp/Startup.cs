@@ -1,23 +1,29 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MySql.Data.MySqlClient;
 using SimpleApp.Core.Interfaces;
 using SimpleApp.Infrastructure;
+using System;
+using System.IO;
 
 namespace SimpleApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Environment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -29,7 +35,6 @@ namespace SimpleApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<AppDbContext>(
@@ -37,6 +42,10 @@ namespace SimpleApp
 
             services.AddScoped<IBrainstormSessionRepository,
                 EFStormSessionRepository>();
+
+            string connectionString = Configuration.GetConnectionString("MySqlConnection");
+            services.AddTransient<MySqlConnection>(e => new MySqlConnection(connectionString));
+            services.AddScoped(typeof(IRepository<>), typeof(DapperRepository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
