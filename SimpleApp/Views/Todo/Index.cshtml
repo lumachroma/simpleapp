@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "Todos";
+    Layout = "_Layout";
+}
+
+<h2>Todo Items</h2>
+<div class="row mb-2">
+    <form class="bg-light p-3 mb-2 col-md-12" data-bind="with: todoForEditing">
+        <div class="form-row align-items-center">
+            <div class="col-md-3 my-1">
+                <label class="sr-only" for="InputName">Name</label>
+                <input type="text" class="form-control" id="InputName" placeholder="Good stuff" data-bind="value:name">
+            </div>
+            <div class="col-md-7 my-1">
+                <label class="sr-only" for="InputDescription">Description</label>
+                <input type="text" class="form-control" id="InputDescription" placeholder="This is so pleasing..." data-bind="value:description">
+            </div>
+            <div class="col-auto my-1">
+                <button type="button" class="btn btn-primary" data-bind="click: $root.addTodo">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row mb-2">
+    <div class="card-columns" data-bind="foreach: todos">
+        @*<div class="col-6 col-md-4 mb-3">*@
+        <div class="card">
+            <div class="card-body">
+                <button type="button" class="close" aria-label="Close" data-bind="click: $root.deleteTodo">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="card-title"><span data-bind="text: name"></span></h5>
+                <h6 class="card-subtitle mb-2 text-muted"><small>Created on <span data-bind="text: moment(createdDate).format('YYYY-MM-DD HH:mm')"></span></small></h6>
+                <p class="card-text"><span data-bind="text: description"></span></p>
+                <!-- ko ifnot: isComplete -->
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bind="click: $root.markTodoAsDone">Mark as done</button>
+                <!-- /ko -->
+            </div>
+            <div class="card-footer">
+                <!-- ko ifnot: isComplete -->
+                <small class="text-muted">Last updated <span data-bind="text: moment().diff(moment(createdDate), 'minutes')">0</span> mins ago</small>
+                <!-- /ko -->
+                <!-- ko if: isComplete -->
+                <small class="text-muted">Completed on <span data-bind="text: moment(completedDate).format('YYYY-MM-DD HH:mm')"></span></small>
+                <!-- /ko -->
+            </div>
+        </div>
+        @*</div>*@
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        var ApiEndpoint = '/api/todos';
+        var SendApi = function (verb, json, url) {
+            var tcs = new $.Deferred();
+            $.ajax({
+                type: verb,
+                data: json,
+                url: url,
+                contentType: "application/json",
+                error: tcs.reject,
+                success: tcs.resolve
+            });
+            return tcs.promise();
+        };
+
+        var InitTodo = function () {
+            $.ajax({
+                url: ApiEndpoint,
+                dataType: 'json',
+                success: function (data) {
+                    if (data instanceof Array) {
+                        viewModel.todos(data);
+                    }
+                }
+            });
+        };
+        var Todo = function (id, name, description) {
+            this.id = ko.observable(id);
+            this.name = ko.observable(name);
+            this.description = ko.observable(description);
+            this.createdDate = moment().format();
+            this.isComplete = false;
+        };
+
+        var ViewModel = function () {
+            var self = this;
+            self.todos = ko.observableArray([]);
+            self.todoForEditing = ko.observable(new Todo());
+            self.addTodo = function (newTodo) {
+                if (newTodo.name() != undefined && newTodo.description() != undefined) {
+                    data = ko.toJSON(newTodo);
+                    console.log(`add: ${data}`);
+                    SendApi('POST', data, ApiEndpoint).done(function () {
+                        InitTodo();
+                        self.todoForEditing(new Todo());
+                    });
+                }
+            }
+            self.markTodoAsDone = function (selectedTodo) {
+                if (selectedTodo.id != undefined) {
+                    selectedTodo.completedDate = moment().format();
+                    selectedTodo.isComplete = true;
+                    data = ko.toJSON(selectedTodo);
+                    console.log(`done: ${data}`);
+                    SendApi('PUT', data, ApiEndpoint).done(function () {
+                        InitTodo();
+                    });
+                }
+            }
+            self.deleteTodo = function (selectedTodo) {
+                if (selectedTodo.id != undefined) {
+                    data = ko.toJSON(selectedTodo);
+                    console.log(`delete: ${data}`);
+                    SendApi('DELETE', data, ApiEndpoint).done(function () {
+                        InitTodo();
+                    });
+                }
+            }
+        };
+        viewModel = new ViewModel();
+        ko.applyBindings(viewModel);
+
+        $(function () {
+            InitTodo();
+        });
+    </script>
+}
