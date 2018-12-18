@@ -52,5 +52,29 @@ namespace SimpleApp.Controllers
             return RedirectToAction(actionName: nameof(Index),
                 controllerName: "Brainstorm");
         }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(actionName: nameof(Index),
+                    controllerName: "Brainstorm");
+            }
+
+            var session = await _sessionRepository.GetByIdAsync(id.Value);
+            if (session == null)
+            {
+                return Content("Session not found.");
+            }
+
+            var viewModel = new StormSessionViewModel()
+            {
+                DateCreated = session.DateCreated,
+                Name = session.Name,
+                Id = session.Id
+            };
+
+            return View(viewModel);
+        }
     }
 }
