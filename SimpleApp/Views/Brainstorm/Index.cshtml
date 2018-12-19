@@ -9,17 +9,19 @@
 <h2>Brainstorm Sessions</h2>
 <div class="row">
     <div class="col-md-8">
-        @foreach (var storm in Model)
-        {
-            <div class="card mb-3 w-50">
-                <div class="card-body">
-                    <h5 class="card-title">@storm.Name</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">@storm.IdeaCount ideas</h6>
-                    <p class="card-text"><small>Created on @storm.DateCreated.ToString()</small></p>
-                    <a href="@Url.Action("Details","Brainstorm", new {id=@storm.Id})">Add Ideas</a>
+        <div class="card-columns">
+            @foreach (var storm in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@storm.Name</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@storm.IdeaCount ideas</h6>
+                        <p class="card-text"><small>Created on @storm.DateCreated.ToString()</small></p>
+                        <a href="@Url.Action("Details","Brainstorm", new {id=@storm.Id})">Add Ideas</a>
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>        
     </div>
     <div class="col-md-4">
         <div class="card">
