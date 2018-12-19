@@ -53,6 +53,20 @@ namespace SimpleApp.Controllers
                 controllerName: "Brainstorm");
         }
 
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var session = await _sessionRepository.GetByIdAsync(id);
+            if (session != null)
+            {
+                await _sessionRepository.DeleteAsync(session);
+            }
+
+            return RedirectToAction(actionName: nameof(Index),
+                    controllerName: "Brainstorm");
+        }
+
         public async Task<IActionResult> Details(int? id)
         {
             if (!id.HasValue)

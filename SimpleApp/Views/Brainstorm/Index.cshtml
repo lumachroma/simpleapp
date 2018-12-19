@@ -14,6 +14,12 @@
             {
                 <div class="card">
                     <div class="card-body">
+                        <form method="post" asp-controller="Brainstorm" asp-action="Delete">
+                            <input type="hidden" name="id" value="@storm.Id" />
+                            <button type="submit" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </form>
                         <h5 class="card-title">@storm.Name</h5>
                         <h6 class="card-subtitle mb-2 text-muted">@storm.IdeaCount ideas</h6>
                         <p class="card-text"><small>Created on @storm.DateCreated.ToString()</small></p>

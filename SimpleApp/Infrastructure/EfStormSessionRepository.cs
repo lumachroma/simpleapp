@@ -42,5 +42,11 @@ namespace SimpleApp.Infrastructure
             _dbContext.Entry(session).State = EntityState.Modified;
             return _dbContext.SaveChangesAsync();
         }
+
+        public Task DeleteAsync(BrainstormSession session)
+        {
+            _dbContext.BrainstormSessions.Remove(session);
+            return _dbContext.SaveChangesAsync();
+        }
     }
 }

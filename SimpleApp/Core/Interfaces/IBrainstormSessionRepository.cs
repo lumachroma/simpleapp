@@ -10,5 +10,6 @@ namespace SimpleApp.Core.Interfaces
         Task<List<BrainstormSession>> ListAsync();
         Task AddAsync(BrainstormSession session);
         Task UpdateAsync(BrainstormSession session);
+        Task DeleteAsync(BrainstormSession session);
     }
 }
