@@ -66,6 +66,33 @@ namespace SimpleApp.Api
 
             return Ok(session);
         }
+
+        [HttpDelete("remove/{ideaId}")]
+        public async Task<IActionResult> Remove(int ideaId, [FromBody]NewIdeaModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var session = await _sessionRepository.GetByIdAsync(model.SessionId);
+            if (session == null)
+            {
+                return NotFound(model.SessionId);
+            }
+
+            var idea = session.Ideas.Find(i => i.Id.Equals(ideaId));
+            if (idea == null)
+            {
+                return NotFound(ideaId);
+            }
+
+            session.Ideas.Remove(idea);
+
+            await _sessionRepository.UpdateAsync(session);
+
+            return Ok(session);
+        }
         #endregion
 
         #region snippet_ForSessionActionResult

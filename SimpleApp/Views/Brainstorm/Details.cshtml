@@ -17,12 +17,11 @@
             </div>
             <ul class="list-group list-group-flush" data-bind='foreach: ideas'>
                 <li class="list-group-item">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <h6><span data-bind='text:name'></span></h6>
-                        @*<span class="badge badge-secondary badge-pill" data-bind="text:$index()+1">0</span>*@
-                        <small class="text-muted">idea <span data-bind="text:$index()+1"></span></small>
-                    </div>
-                    <p class="mb-1"><span data-bind='text:description'></span></p>
+                    <button type="button" class="close" aria-label="Close" data-bind="click: $root.removeIdea">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h6 class="card-subtitle"><span data-bind='text:name'></span></h6>
+                    <p class="card-text"><span data-bind='text:description'></span></p>
                 </li>
             </ul>
         </div>
@@ -69,15 +68,28 @@
                 if(newIdea.name() != undefined && newIdea.description() != undefined)
                 {
                     console.log("add idea: " + newIdea.name() + " desc: " + newIdea.description());
-                    self.ideas.push(newIdea);
                     $.ajax({
                         url: '/api/ideas/create',
                         type: 'POST',
                         data: ko.toJSON(newIdea),
                         contentType: 'application/json'
+                    }).done(function (result) {
+                        self.ideas(result.ideas);
+                        self.ideaForEditing(new Idea());
                     });
-                    self.ideaForEditing(new Idea());
                 }
+            }
+            self.removeIdea = function (selectedIdea) {
+                console.log("delete idea: " + selectedIdea.name + " desc: " + selectedIdea.description);
+                var idea = new Idea(selectedIdea.id, selectedIdea.name, selectedIdea.description);
+                $.ajax({
+                    url: '/api/ideas/remove/' + selectedIdea.id,
+                    type: 'DELETE',
+                    data: ko.toJSON(idea),
+                    contentType: 'application/json'
+                }).done(function (result) {
+                    self.ideas(result.ideas);
+                });
             }
         };
         viewModel = new ViewModel();
